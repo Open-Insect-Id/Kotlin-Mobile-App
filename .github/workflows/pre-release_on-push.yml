@@ -43,18 +43,24 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: ./gradlew assembleRelease assembleUnminifiedRelease
+          command: ./gradlew assembleRelease assembleUnminifiedRelease assembleDebuggableRelease
 
       - name: Rename APKs with version
         run: |
           MIN="OpenInsectId-v${{ env.versionName }}-beta-${{ github.run_number }}.apk"
           UNMIN="OpenInsectId-v${{ env.versionName }}-beta-${{ github.run_number }}-unminified.apk"
+          DEBUG="OpenInsectId-v${{ env.versionName }}-beta-${{ github.run_number }}-debuggable.apk"
+          
+          
           
           mv app/build/outputs/apk/release/app-release.apk "$MIN"
           mv app/build/outputs/apk/unminifiedRelease/app-unminifiedRelease.apk "$UNMIN"
+          mv app/build/outputs/apk/debuggableRelease/app-unminifiedRelease.apk "$DEBUG"
           
           echo "APK_MIN=$MIN" >> $GITHUB_ENV
           echo "APK_UNMIN=$UNMIN" >> $GITHUB_ENV
+          echo "APK_DEBUG=$DEBUG" >> $GITHUB_ENV
+      
       
 
       # Create tag before release
@@ -74,5 +80,6 @@ jobs:
           files: |
             ${{ env.APK_MIN }}
             ${{ env.APK_UNMIN }}
+            ${{ env.APK_DEBUG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
