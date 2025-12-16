@@ -50,16 +50,15 @@ jobs:
           MIN="OpenInsectId-v${{ env.versionName }}-beta-${{ github.run_number }}.apk"
           UNMIN="OpenInsectId-v${{ env.versionName }}-beta-${{ github.run_number }}-unminified.apk"
           DEBUG="OpenInsectId-v${{ env.versionName }}-beta-${{ github.run_number }}-debuggable.apk"
-          
-          
-          
+
           mv app/build/outputs/apk/release/app-release.apk "$MIN"
           mv app/build/outputs/apk/unminifiedRelease/app-unminifiedRelease.apk "$UNMIN"
-          mv app/build/outputs/apk/debuggableRelease/app-unminifiedRelease.apk "$DEBUG"
-          
+          mv app/build/outputs/apk/debuggableRelease/app-debuggableRelease.apk "$DEBUG"  # FIXED: app-debuggableRelease.apk
+
           echo "APK_MIN=$MIN" >> $GITHUB_ENV
           echo "APK_UNMIN=$UNMIN" >> $GITHUB_ENV
           echo "APK_DEBUG=$DEBUG" >> $GITHUB_ENV
+      
       
       
 
