@@ -116,7 +116,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(libs.coil.compose)
+
+    implementation(libs.coil.compose.v300alpha04)
+    implementation(libs.coil.network.okhttp)
 
     implementation(libs.androidx.activity.ktx)
 
@@ -128,4 +130,9 @@ dependencies {
 
     // ONNX Runtime
     implementation(libs.onnxruntime.android)
+
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.json)
+
 }

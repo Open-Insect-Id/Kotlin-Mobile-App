@@ -9,7 +9,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,24 +26,23 @@ import org.openinsectid.app.data.FetchedImage
 import org.openinsectid.app.data.ImageSearchError
 import org.openinsectid.app.data.ImageSearchState
 import org.openinsectid.app.hasInternet
-import org.openinsectid.app.utils.searchGoogleImages
-import org.openinsectid.app.utils.searchInaturalistImages
+import org.openinsectid.app.utils.searchImages
 import org.openinsectid.app.webSearch
 
-
 @Composable
-fun InaturalistImageSearch(
+fun ImageSearch(
     query: String,
-    onImageSelected: (FetchedImage) -> Unit
+    onImageClick: (FetchedImage) -> Unit
 ) {
     val ctx = LocalContext.current
     var state by remember { mutableStateOf<ImageSearchState>(ImageSearchState.Idle) }
 
-    val normalQuery = normalizeTaxonQuery(query)
+    val normalQuery = remember(query) {
+        query.trim()
+    }
 
-
-    LaunchedEffect(query) {
-        if (query.isBlank()) return@LaunchedEffect
+    LaunchedEffect(normalQuery) {
+        if (normalQuery.isBlank()) return@LaunchedEffect
 
         if (!ctx.hasInternet()) {
             state = ImageSearchState.Error(
@@ -53,12 +57,11 @@ fun InaturalistImageSearch(
 
         try {
             val images = withContext(Dispatchers.IO) {
-                Log.e("query", "QUERY: $normalQuery")
-
-                searchInaturalistImages(normalQuery)
+                Log.d("ImageSearch", "QUERY: $normalQuery")
+                searchImages(normalQuery)
             }
 
-            Log.d("ImageSearch", "SUCCESS query='$query' results=${images.size}")
+            Log.d("ImageSearch", "SUCCESS query='$normalQuery' results=${images.size}")
             state = ImageSearchState.Success(images)
 
         } catch (e: ImageSearchError) {
@@ -74,14 +77,15 @@ fun InaturalistImageSearch(
     }
 
     TextButton(
-        onClick = { webSearch(ctx, query) }
+        onClick = { webSearch(ctx, normalQuery) }
     ) {
         Text(
             text = "Search web",
             color = MaterialTheme.colorScheme.onBackground,
-            textDecoration =  TextDecoration.Underline
+            textDecoration = TextDecoration.Underline
         )
     }
+
     when (val s = state) {
         ImageSearchState.Idle -> Unit
 
@@ -113,65 +117,12 @@ fun InaturalistImageSearch(
             if (s.images.isEmpty()) {
                 Text("No images found\nQuery: $normalQuery")
             } else {
+                Log.e("debug",s.images.toString())
                 ImageResultsGrid(
                     images = s.images,
-                    onImageClick = onImageSelected
+                    onImageClick = onImageClick
                 )
             }
         }
     }
 }
-
-
-
-
-@Composable
-fun GoogleImageSearch(
-    query: String,
-    apiKey: String,
-    cx: String,
-    onImageSelected: (FetchedImage) -> Unit
-) {
-    var state by remember { mutableStateOf<ImageSearchState>(ImageSearchState.Idle) }
-
-    LaunchedEffect(query) {
-        if (query.isBlank()) return@LaunchedEffect
-
-        state = ImageSearchState.Loading
-
-        try {
-            val images = withContext(Dispatchers.IO) {
-                searchGoogleImages(query, apiKey, cx)
-            }
-            state = ImageSearchState.Success(images)
-        } catch (t: Throwable) {
-            state = ImageSearchState.Error(ImageSearchError.Unknown(t))
-        }
-    }
-
-    when (val s = state) {
-        ImageSearchState.Idle -> Unit
-        ImageSearchState.Loading -> Box(
-            Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            contentAlignment = Alignment.Center
-        ) { CircularProgressIndicator() }
-        is ImageSearchState.Error -> Column {
-            Text(s.error.userMessage, color = MaterialTheme.colorScheme.error)
-            Text(s.error.debugMessage, style = MaterialTheme.typography.bodySmall)
-        }
-        is ImageSearchState.Success -> {
-            if (s.images.isEmpty()) {
-                Text("No images found\nQuery: $query")
-            } else {
-                ImageResultsGrid(s.images, onImageClick = onImageSelected)
-            }
-        }
-    }
-}
-
-
-fun normalizeTaxonQuery(raw: String): String =
-    raw.split(" ")
-        .firstOrNull { it.length > 3 } ?: raw

@@ -3,8 +3,8 @@ package org.openinsectid.app
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
-import java.net.URI
 import androidx.core.net.toUri
 
 /**
@@ -62,6 +62,20 @@ fun webSearch(context: Context, query: String) {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     context.startActivity(intent)
+}
+
+fun openUrl(ctx: Context, url: String) {
+//    val encodedQuery = Uri.encode(url)
+
+    try {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        ctx.startActivity(intent)
+    } catch (_: Exception) {
+        ctx.showToast("No application found to open this link")
+        Log.e("Error", "Could not open link")
+    }
 }
 
 //

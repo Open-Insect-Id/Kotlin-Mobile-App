@@ -57,8 +57,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.openinsectid.app.data.ImageStore
-import org.openinsectid.app.ui.components.InaturalistImageSearch
+import org.openinsectid.app.openUrl
+import org.openinsectid.app.ui.components.ImageSearch
 import org.openinsectid.app.utils.InferenceManager
+import org.openinsectid.app.webSearch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -265,10 +267,10 @@ fun MainScreen(navController: NavController) {
                                 .values
                                 .joinToString(" ")
                         }
-                        InaturalistImageSearch(
+                        ImageSearch(
                             query = insectName,
-                            onImageSelected = {
-                                // Nothing for now, but will open search
+                            onImageClick = {
+                                openUrl(ctx, it.full)
                             }
                         )
 
