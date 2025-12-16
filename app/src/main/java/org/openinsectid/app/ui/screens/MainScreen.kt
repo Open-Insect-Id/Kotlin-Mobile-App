@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.openinsectid.app.data.ImageStore
-import org.openinsectid.app.ui.components.DuckDuckGoImageSearch
+import org.openinsectid.app.ui.components.InaturalistImageSearch
 import org.openinsectid.app.utils.InferenceManager
 
 
@@ -266,7 +265,7 @@ fun MainScreen(navController: NavController) {
                                 .values
                                 .joinToString(" ")
                         }
-                        DuckDuckGoImageSearch(
+                        InaturalistImageSearch(
                             query = insectName,
                             onImageSelected = {
                                 // Nothing for now, but will open search

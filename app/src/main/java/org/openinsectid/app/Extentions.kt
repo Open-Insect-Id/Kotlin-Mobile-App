@@ -37,6 +37,19 @@ fun Context.showToast(
     }
 }
 
+
+
+fun Context.hasInternet(): Boolean {
+    val cm = getSystemService(Context.CONNECTIVITY_SERVICE)
+            as android.net.ConnectivityManager
+
+    val network = cm.activeNetwork ?: return false
+    val caps = cm.getNetworkCapabilities(network) ?: return false
+
+    return caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
+
 //
 //fun Context.copyToClipboard(text: String) {
 //    val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

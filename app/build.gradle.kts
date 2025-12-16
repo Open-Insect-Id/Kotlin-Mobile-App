@@ -91,6 +91,13 @@ android {
     buildFeatures {
         compose = true
     }
+
+    tasks.register("printVersionName") {
+        doLast {
+            val versionName = android.defaultConfig.versionName
+            println("VERSION_NAME=$versionName")
+        }
+    }
 }
 
 dependencies {

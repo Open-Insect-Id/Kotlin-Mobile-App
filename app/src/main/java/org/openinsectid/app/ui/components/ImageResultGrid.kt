@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import org.openinsectid.app.data.DdgImage
+import org.openinsectid.app.data.FetchedImage
 
 @Composable
 fun ImageResultsGrid(
-    images: List<DdgImage>,
-    onImageClick: (DdgImage) -> Unit
+    images: List<FetchedImage>,
+    onImageClick: (FetchedImage) -> Unit
 ) {
     androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
         columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
