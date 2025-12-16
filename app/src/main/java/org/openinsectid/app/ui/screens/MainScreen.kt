@@ -58,6 +58,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.openinsectid.app.data.ImageStore
+import org.openinsectid.app.ui.components.DuckDuckGoImageSearch
 import org.openinsectid.app.utils.InferenceManager
 
 
@@ -247,10 +248,10 @@ fun MainScreen(navController: NavController) {
                         )
                     }
 
-                    predictions?.takeIf { it.isNotEmpty() }?.let { preds ->
+                    predictions?.takeIf { it.isNotEmpty() }?.let { infos ->
                         Spacer(Modifier.height(16.dp))
                         Text("Predictions:", style = MaterialTheme.typography.headlineSmall)
-                        preds.forEach { (level, prediction) ->
+                        infos.forEach { (level, prediction) ->
                             Text(
                                 text = "$level: $prediction",
                                 style = MaterialTheme.typography.bodyLarge,
@@ -258,7 +259,21 @@ fun MainScreen(navController: NavController) {
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                    } ?: predictions?.takeIf { it.isEmpty() }?.let {
+
+                        val insectName = remember(infos) {
+                            infos
+                                .toSortedMap()
+                                .values
+                                .joinToString(" ")
+                        }
+                        DuckDuckGoImageSearch(
+                            query = insectName,
+                            onImageSelected = {
+                                // Nothing for now, but will open search
+                            }
+                        )
+
+                    } ?: predictions?.let {
                         Spacer(Modifier.height(16.dp))
                         Text("No predictions found", color = Color.Red)
                     }
