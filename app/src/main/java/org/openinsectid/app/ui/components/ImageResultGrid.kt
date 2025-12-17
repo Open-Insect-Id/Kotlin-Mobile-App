@@ -31,7 +31,7 @@ fun ImageResultsGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(max = 400.dp),
+            .heightIn(max = 1000.dp),
         contentPadding = PaddingValues(8.dp)
     ) {
         items(images) { img ->
